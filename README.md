@@ -193,9 +193,9 @@ docker compose exec fastapi python scripts/seed_leads.py
 5. Edita las credenciales de los nodos Postgres (`Insertar Semillas`, `Leer Leads`):
 
    * Host: `postgres` (si n8n corre en Docker junto a Postgres).
-   * Database: `n8n_db`
-   * User: `n8n`
-   * Password: `n8n_password`
+   * Database: `POSTGRES_DB`
+   * User: `POSTGRES_USER`
+   * Password: `POSTGRES_PASSWORD`
    * Port: `5432`
 
 ### Arquitectura esperada después de la importación
