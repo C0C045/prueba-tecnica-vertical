@@ -1,0 +1,270 @@
+{
+  "name": "Manejo de leads n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "leads",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b88e642e-1184-4b71-97c2-4600bc710286",
+      "name": "Webhook Leads",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        352
+      ],
+      "webhookId": "3ae7e4c0-ff93-4a41-886d-63d69a53206a"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a717efa7-0cd2-4fc5-b60f-c519adf3bb76",
+      "name": "Respond Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads",
+          "mode": "list",
+          "cachedResultName": "leads"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1008,
+        352
+      ],
+      "id": "29da8015-196d-4644-abbc-fb0296ab72d8",
+      "name": "Leer Leads",
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "Lj2W4WXPvxW8nkoW",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const seeds = [\n  { name: \"Ana Salcedo\", location: \"Medellín\", budget: 200000000 },\n  { name: \"Santiago Gallo\", location: \"Medellín\", budget: 500000000 },\n  { name: \"Nicolle Rodríguez\", location: \"Medellín\", budget: 650000000 },\n  { name: \"Pablo Sánchez\", location: \"Bogotá\", budget: 350000000 },\n  { name: \"Andrés Arias\", location: \"Bogotá\", budget: 150000000 },\n  { name: \"Andrés Limas\", location: \"Bogotá\", budget: 450000000 },\n];\nreturn seeds.map(s => ({ json: s }));"
+      },
+      "id": "5901d8b5-e7e8-4e73-b085-06b66d360d50",
+      "name": "Preparar Semillas",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        512,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "table": "leads",
+        "columns": "name,location,budget",
+        "additionalFields": {}
+      },
+      "id": "0a8469e8-6fae-4115-bc97-48f0902d2bb2",
+      "name": "Insertar Semillas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        768,
+        240
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "Lj2W4WXPvxW8nkoW",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "string": [
+            {
+              "value1": "={{ $json[\"query\"][\"seed\"] }}",
+              "value2": "true"
+            }
+          ]
+        }
+      },
+      "id": "df07beec-8b87-48cd-a272-82b4383d945f",
+      "name": "Condición Semilla",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        272,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const query = ($items('Webhook Leads')[0].json.query || {});\nconst loc = (query.location || '').trim();\nconst hasLoc = loc.length > 0;\nconst min = query.budget_min ? Number(query.budget_min) : null;\nconst max = query.budget_max ? Number(query.budget_max) : null;\n\nconst leads = items.map(i => i.json);\nconst filtered = leads.filter(l => {\n  const budget = Number(l.budget);\n  const locationOk = !hasLoc || l.location.toLowerCase() === loc.toLowerCase();\n  const minOk = min === null || budget >= min;\n  const maxOk = max === null || budget <= max;\n  return locationOk && minOk && maxOk;\n});\n\nreturn filtered.map(f => ({ json: f }));"
+      },
+      "id": "c4b168b7-9236-4f8f-a2c2-5d3f3474093b",
+      "name": "Filtar Leads",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const leads = items.map(i => i.json);\nconst total = leads.reduce((acc, l) => acc + Number(l.budget), 0);\nreturn leads.map(l => ({ json: { ...l, _total_budget: total } }));"
+      },
+      "id": "fd23d135-56e7-4593-8c7a-32c20de289f3",
+      "name": "Calcular Budget Total",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const params = ($items('Webhook Leads')[0].json.query || {});\nconst leads = items.map(i => i.json);\nleads.sort((a, b) => Number(b.budget) - Number(a.budget));\nconst total = leads.length ? Number(leads[0]._total_budget) : 0;\n\nconst response = {\n  filters: {\n    location: params.location ?? null,\n    budget_min: params.budget_min ?? null,\n    budget_max: params.budget_max ?? null\n  },\n  count: leads.length,\n  total_budget: total,\n  leads\n};\n\nreturn [{ json: response }];"
+      },
+      "id": "4af0cd96-d1a1-4c3f-8a5b-7e924fb15445",
+      "name": "Ordenar & Ajustar respuesta",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        352
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Leads": {
+      "main": [
+        [
+          {
+            "node": "Condición Semilla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer Leads": {
+      "main": [
+        [
+          {
+            "node": "Filtar Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Semillas": {
+      "main": [
+        [
+          {
+            "node": "Insertar Semillas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insertar Semillas": {
+      "main": [
+        [
+          {
+            "node": "Leer Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condición Semilla": {
+      "main": [
+        [
+          {
+            "node": "Preparar Semillas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Leer Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtar Leads": {
+      "main": [
+        [
+          {
+            "node": "Calcular Budget Total",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular Budget Total": {
+      "main": [
+        [
+          {
+            "node": "Ordenar & Ajustar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ordenar & Ajustar respuesta": {
+      "main": [
+        [
+          {
+            "node": "Respond Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8dd4dd83-2683-4a58-8b44-263611338817",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "01bbf8ffd7adf04df374e41b6faacab47b0912b1fd3e245284f2273ce19017c6"
+  },
+  "id": "aI33lOPQqNyD7aoT",
+  "tags": []
+}
