@@ -120,7 +120,7 @@
     },
     {
       "parameters": {
-        "functionCode": "const query = ($items('Webhook Leads')[0].json.query || {});\nconst loc = (query.location || '').trim();\nconst hasLoc = loc.length > 0;\nconst min = query.budget_min ? Number(query.budget_min) : null;\nconst max = query.budget_max ? Number(query.budget_max) : null;\n\nconst leads = items.map(i => i.json);\nconst filtered = leads.filter(l => {\n  const budget = Number(l.budget);\n  const locationOk = !hasLoc || l.location.toLowerCase() === loc.toLowerCase();\n  const minOk = min === null || budget >= min;\n  const maxOk = max === null || budget <= max;\n  return locationOk && minOk && maxOk;\n});\n\nreturn filtered.map(f => ({ json: f }));"
+        "functionCode": "const query = ($items('Webhook Leads')[0].json.query || {});\nconst loc = (query.location || '').trim();\nconst hasLoc = loc.length > 0;\nconst min = query.budget_min ? Number(query.budget_min) : null;\nconst max = query.budget_max ? Number(query.budget_max) : null;\n\n// Convierte los ítems en leads\nconst leads = items.map(i => i.json);\n\n// Filtra los leads según ubicación y presupuesto\nconst filtered = leads.filter(l => {\n  const budget = Number(l.budget);\n  const locationOk = !hasLoc || l.location.toLowerCase() === loc.toLowerCase();\n  const minOk = min === null || budget >= min;\n  const maxOk = max === null || budget <= max;\n  return locationOk && minOk && maxOk;\n});\n\nreturn filtered.map(f => ({ json: f }));"
       },
       "id": "c4b168b7-9236-4f8f-a2c2-5d3f3474093b",
       "name": "Filtar Leads",
@@ -133,7 +133,7 @@
     },
     {
       "parameters": {
-        "functionCode": "const leads = items.map(i => i.json);\nconst total = leads.reduce((acc, l) => acc + Number(l.budget), 0);\nreturn leads.map(l => ({ json: { ...l, _total_budget: total } }));"
+        "functionCode": "// Convierte los ítems en leads\nconst leads = items.map(i => i.json);\n\n// Suma el presupuesto total de todos los leads\nconst total = leads.reduce((acc, l) => acc + Number(l.budget), 0);\n\n// Devuelve los leads con un nuevo campo: el presupuesto total\nreturn leads.map(l => ({ json: { ...l, _total_budget: total } }));"
       },
       "id": "fd23d135-56e7-4593-8c7a-32c20de289f3",
       "name": "Calcular Budget Total",
@@ -146,7 +146,7 @@
     },
     {
       "parameters": {
-        "functionCode": "const params = ($items('Webhook Leads')[0].json.query || {});\nconst leads = items.map(i => i.json);\nleads.sort((a, b) => Number(b.budget) - Number(a.budget));\nconst total = leads.length ? Number(leads[0]._total_budget) : 0;\n\nconst response = {\n  filters: {\n    location: params.location ?? null,\n    budget_min: params.budget_min ?? null,\n    budget_max: params.budget_max ?? null\n  },\n  count: leads.length,\n  total_budget: total,\n  leads\n};\n\nreturn [{ json: response }];"
+        "functionCode": "// Obtiene los parámetros de búsqueda (para devolverlos en la respuesta)\nconst params = ($items('Webhook Leads')[0].json.query || {});\n\n// Convierte los ítems en leads\nconst leads = items.map(i => i.json);\n\n// Ordena los leads de mayor a menor presupuesto\nleads.sort((a, b) => Number(b.budget) - Number(a.budget));\n\n// Toma el presupuesto total desde el lead con mayor presupuesto (ya calculado antes)\nconst total = leads.length ? Number(leads[0]._total_budget) : 0;\n\n// Construye la respuesta final con filtros, conteo, total y leads ordenados\nconst response = {\n  filters: {\n    location: params.location ?? null,\n    budget_min: params.budget_min ?? null,\n    budget_max: params.budget_max ?? null\n  },\n  count: leads.length,\n  total_budget: total,\n  leads\n};\n\nreturn [{ json: response }];"
       },
       "id": "4af0cd96-d1a1-4c3f-8a5b-7e924fb15445",
       "name": "Ordenar & Ajustar respuesta",
@@ -260,7 +260,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "8dd4dd83-2683-4a58-8b44-263611338817",
+  "versionId": "79c597ec-671e-4745-b6a3-fd960580f773",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "01bbf8ffd7adf04df374e41b6faacab47b0912b1fd3e245284f2273ce19017c6"
