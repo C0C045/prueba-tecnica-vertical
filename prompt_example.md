@@ -44,6 +44,7 @@ Cuerpo: [Mensaje completo en párrafos breves]
 
 **Output:**
 Asunto: Hemos recibido tu reporte de acceso
+
 Cuerpo: Hola, gracias por contactarnos. Hemos recibido tu reporte sobre el acceso a la plataforma.
 Para poder ayudarte mejor, ¿puedes confirmarnos tu nombre de usuario y el navegador/dispositivo que usas?
 Con esa información podremos avanzar en la revisión.
@@ -52,10 +53,11 @@ Con esa información podremos avanzar en la revisión.
 
 ### 2. Diagnóstico (causa identificada)
 
-**Input:** Causa → "error en servidor de autenticación", mitigación en curso.  
+**Input:** error en servidor de autenticación, mitigación en curso.  
 
 **Output:**
 Asunto: Avance en el diagnóstico de tu caso
+
 Cuerpo: Hola, hemos identificado que la dificultad para acceder se debe a un error temporal en nuestro servidor de autenticación.
 Nuestro equipo ya está aplicando medidas de mitigación y esperamos una mejora en las próximas horas.
 Te mantendremos informado con la siguiente actualización.
@@ -64,10 +66,11 @@ Te mantendremos informado con la siguiente actualización.
 
 ### 3. Resolución (problema solucionado)
 
-**Input:** Acciones → "reinicio del servidor y ajuste en configuración".  
+**Input:** reinicio del servidor y ajuste en configuración.  
 
 **Output:**
 Asunto: Tu caso ha sido resuelto
+
 Cuerpo: Hola, queremos informarte que tu caso fue resuelto.
 Se realizaron las siguientes acciones: reinicio del servidor y ajuste en la configuración de autenticación.
 Puedes validar intentando nuevamente el acceso.
