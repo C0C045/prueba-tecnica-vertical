@@ -43,6 +43,7 @@ Cuerpo: [Mensaje completo en párrafos breves]
 **Input:** Usuario reporta "no puedo acceder a la plataforma".  
 
 **Output:**
+
 Asunto: Hemos recibido tu reporte de acceso
 
 Cuerpo: Hola, gracias por contactarnos. Hemos recibido tu reporte sobre el acceso a la plataforma.
@@ -56,6 +57,7 @@ Con esa información podremos avanzar en la revisión.
 **Input:** error en servidor de autenticación, mitigación en curso.  
 
 **Output:**
+
 Asunto: Avance en el diagnóstico de tu caso
 
 Cuerpo: Hola, hemos identificado que la dificultad para acceder se debe a un error temporal en nuestro servidor de autenticación.
@@ -69,6 +71,7 @@ Te mantendremos informado con la siguiente actualización.
 **Input:** reinicio del servidor y ajuste en configuración.  
 
 **Output:**
+
 Asunto: Tu caso ha sido resuelto
 
 Cuerpo: Hola, queremos informarte que tu caso fue resuelto.
