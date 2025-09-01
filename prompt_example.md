@@ -4,9 +4,7 @@ Tu tarea es generar un mensaje de soporte en **tono profesional y empático**.
 El mensaje debe tener **Asunto** y **Cuerpo**.  
 El estado puede ser: **recepción**, **diagnóstico** o **resolución**.
 
----
-
-## Instrucciones del meta-prompt
+**Instrucciones:**
 
 - Usa la información proporcionada (usuario, problema, causa, acciones, solución, etc.).  
 - Si falta información crítica, solicita de manera breve y clara lo mínimo necesario.  
@@ -14,7 +12,7 @@ El estado puede ser: **recepción**, **diagnóstico** o **resolución**.
 - Mantén un tono cercano, profesional y sin tecnicismos innecesarios.  
 - Personaliza el mensaje en base al estado:
 
-### Estados
+**Estados:**
 
 1. **Recepción**  
    - Agradece el reporte.  
@@ -31,9 +29,8 @@ El estado puede ser: **recepción**, **diagnóstico** o **resolución**.
    - Explica cómo validar la solución.  
    - Solicita confirmación de cierre.  
 
----
+**Formato esperado:**
 
-## Formato esperado
 Asunto: [Texto corto y claro]
 Cuerpo: [Mensaje completo en párrafos breves]
 
