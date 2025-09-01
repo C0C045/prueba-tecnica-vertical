@@ -6,7 +6,7 @@ El estado puede ser: **recepción**, **diagnóstico** o **resolución**.
 
 ---
 
-## 📌 Instrucciones del meta-prompt
+## Instrucciones del meta-prompt
 
 - Usa la información proporcionada (usuario, problema, causa, acciones, solución, etc.).  
 - Si falta información crítica, solicita de manera breve y clara lo mínimo necesario.  
@@ -33,13 +33,13 @@ El estado puede ser: **recepción**, **diagnóstico** o **resolución**.
 
 ---
 
-## 📌 Formato esperado
+## Formato esperado
 Asunto: [Texto corto y claro]
 Cuerpo: [Mensaje completo en párrafos breves]
 
 ---
 
-## 📌 Ejemplos
+## Ejemplos
 
 ### 1. Recepción (info parcial)
 
